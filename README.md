@@ -34,7 +34,7 @@ Troubleshooting:
   * PATCH '/:name' to update specific properties of a single envelope by `name`
   * DELETE '/:name' to delete a single envelope by `name`
 
-* /expenses __Coming Soon__
+* /expenses __[Coming Soon]__
   * GET '/:id' to get a specific expense by `id`
   * POST '/' to create a new expense linked to an envelope
   * DELETE '/:id' to delete a specific expense by `id`
