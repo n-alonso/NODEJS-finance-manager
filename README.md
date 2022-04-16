@@ -28,12 +28,17 @@ Troubleshooting:
 
 * /envelopes 
   * GET '/' to get an array of all envelopes
-  * GET '/:name' to get a single envelope by name
+  * GET '/:name' to get a single envelope by `name`
   * POST '/' to create an additional envelope
-  * PUT '/:name' to update an entire single envelope by name
-  * PATCH '/:name' to update specific properties of a single envelope by name
-  * DELETE '/:name' to delete a single envelope by name
+  * PUT '/:name' to update an entire single envelope by `name`
+  * PATCH '/:name' to update specific properties of a single envelope by `name`
+  * DELETE '/:name' to delete a single envelope by `name`
 
+* /expenses __Coming Soon__
+  * GET '/:id' to get a specific expense by `id`
+  * POST '/' to create a new expense linked to an envelope
+  * DELETE '/:id' to delete a specific expense by `id`
+ 
 ### Schemas
 
 * salary: number
