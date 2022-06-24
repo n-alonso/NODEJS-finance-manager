@@ -1,4 +1,4 @@
-# backend_budget-manager-api
+# backend_personal-finance-manager
 
 ## Introduction
 
