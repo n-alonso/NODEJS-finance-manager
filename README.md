@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Personal Finance Manager project to set your salary, manage your spending limits per categories or [envelopes](https://www.thebalance.com/what-is-envelope-budgeting-1293682), and add expenses that can automatically substract their amounts from their respective categories.  
+Personal Finance Manager project to set your salary, manage your spending limits per categories or [envelopes](https://www.thebalance.com/what-is-envelope-budgeting-1293682), and add expenses that can automatically subtract their amounts from their respective categories.  
 
 Tech-stack: 
  * Node.js 
