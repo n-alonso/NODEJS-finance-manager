@@ -1,9 +1,19 @@
-# backend_budget-manager-api
+# backend_personal-finance-manager
 
 ## Introduction
 
-Practice backend project with the theme of a Budget Manager.
-Simple API built with Node.js and Express.js, and dedicated endpoints to set your salary and manage your limits per categories or [envelopes](https://www.thebalance.com/what-is-envelope-budgeting-1293682).
+Personal Finance Manager project to set your salary, manage your spending limits per categories or [envelopes](https://www.thebalance.com/what-is-envelope-budgeting-1293682), and add expenses that can automatically subtract their amounts from their respective categories.  
+
+Tech-stack: 
+ * Node.js 
+ * Express.js
+ * PostgreSQL __[Coming Soon]__
+ * Mocha __[Coming Soon]__
+ * Chai __[Coming Soon]__
+ * Heroku __[Coming Soon]__
+ * OpenAPI Specification __[Coming Soon]__
+
+## Table of Contents __[Coming Soon]__
 
 ## Installation
 
@@ -12,11 +22,8 @@ To install it, follow these steps:
  * Clone this project locally
  * Navigate to the local repository `cd <file_path>`
  * Install this project's dependencies `npm install`
- * Run the project `node server.js` or `nodemon server.js`
-
-Troubleshooting:
- * If you get `nodemon is not a valid command` or similar, run `npm i nodemon`. If the issue persists, run `sudo npm i nodemon`
- * If the issue persists or you get similar issues with other packages, you might want to check that they are installed with `<package_name> -v` and force install with `sudo npm i <package_name>`
+ * Run the project `npm start`
+ * Test the project `npm test`
 
 ## Description
 
