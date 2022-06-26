@@ -5,15 +5,26 @@
 Personal Finance Manager project to set your salary, manage your spending limits per categories or [envelopes](https://www.thebalance.com/what-is-envelope-budgeting-1293682), and add expenses that can automatically subtract their amounts from their respective categories.  
 
 Tech-stack: 
- * Node.js 
- * Express.js
- * PostgreSQL __[Coming Soon]__
- * Mocha __[Coming Soon]__
- * Chai __[Coming Soon]__
- * Heroku __[Coming Soon]__
- * OpenAPI Specification __[Coming Soon]__
+ * Implementation code:
+    * Node.js 
+    * Express.js
+    * PostgreSQL __[Coming Soon]__
+ * Testing code:
+    * Mocha __[Coming Soon]__
+    * Chai __[Coming Soon]__
+    * Supertest __[Coming Soon]__
+ * Deployment:
+    * Heroku __[Coming Soon]__
+ * Documentation:
+    * OpenAPI Specification
 
-## Table of Contents __[Coming Soon]__
+## Table of Contents
+
+1. [Installation](#installation)
+2. [Documentation](#documentation)
+   * [OpenAPI Specification](#openapi-specification)
+   * [Database](#database)
+   * [Constraints](#constraints)
 
 ## Installation
 
@@ -25,34 +36,18 @@ To install it, follow these steps:
  * Run the project `npm start`
  * Test the project `npm test`
 
-## Description
+## Documentation
 
-### Endpoints
+### OpenAPI Specification
 
-* /salary
-  * GET '/' to retrieve your salary
-  * PUT '/' to update your salary
+Please discover this API via it's Swagger UI represented OpenAPI Specification __[Coming Soon]__
 
-* /envelopes 
-  * GET '/' to get an array of all envelopes
-  * GET '/:name' to get a single envelope by `name`
-  * POST '/' to create an additional envelope
-  * PUT '/:name' to update an entire single envelope by `name`
-  * PATCH '/:name' to update specific properties of a single envelope by `name`
-  * DELETE '/:name' to delete a single envelope by `name`
+### Database
 
-* /expenses __[Coming Soon]__
-  * GET '/:id' to get a specific expense by `id`
-  * POST '/' to create a new expense linked to an envelope
-  * DELETE '/:id' to delete a specific expense by `id`
- 
-### Schemas
+Explore the [Database Schema](https://dbdiagram.io/d/62b8326969be0b672c421b5d):  
+![image](https://user-images.githubusercontent.com/63936366/175810172-84236a64-0697-48ca-b51c-c971cf0e2ee5.png)
 
-* salary: number
-* envelopes:
-  * name: string
-  * limit: number
-  * available: number
+Or perform [Database Queries]() directly __[Coming Soon]__
 
 ### Constraints
 
