@@ -1,0 +1,469 @@
+openapi: 3.0.1
+info:
+  title: Personal Finance Manager
+  version: 1.0.0
+  description: >-
+    Personal Finance Manager project to set your salary, manage your spending
+    limits per categories or envelopes, and add expenses that can automatically
+    subtract their amounts from their respective categories.  
+    
+    
+    For more information please visit below's GitHub respository.
+  license:
+    name: ISC Licence
+    url: https://en.wikipedia.org/wiki/ISC_license
+paths:
+  /salary:
+    summary: Get salary data
+    description: This path is used to retrieve or update your salary information
+    get:
+      summary: Retrieve your salary information
+      description: Retrieve the current value for salary
+      operationId: get_salary
+      responses:
+        '200':
+          description: '## Ok'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Salary'
+        default:
+          description: '## Error Schema'
+          content:
+            application/json:
+              schema:
+               $ref: '#/components/schemas/Error'
+      tags:
+        - Salary
+    put:
+      summary: Update your salary information
+      description: Change the current value of your salary for the provided one
+      operationId: update_salary
+      requestBody:
+        description: Update Salary Object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Salary'
+      responses:
+        '200':
+          description: '## Ok'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Salary'
+        '400':
+          description: '## Bad Request'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  oneOf:
+                    - $ref: '#/components/schemas/Missing_Property_Error'
+                    - $ref: '#/components/schemas/Bad_Type_Error'
+                    - $ref: '#/components/schemas/Envelopes_Limits_Constraint_Error'
+        default:
+          description: '## Error Schema'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Salary
+  /envelopes:
+    summary: Get envelopes data
+    description: Retrieve all or create a new envelope
+    get:
+      summary: Get all envelopes
+      description: Retrieve a list of all the currently setup envelopes
+      operationId: get_envelopes
+      responses:
+        '200':
+          description: '## Ok'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelopes'
+        default:
+          description: '## Error Schema'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Envelopes
+    post:
+      summary: Create a new envelope
+      description: Create a new envelope based on the provided values
+      operationId: create_envelope
+      requestBody:
+        description: Create Envelope Object
+        content:
+          application/json:
+            schema:
+                properties:
+                  name:
+                    type: string
+                  limit:
+                    type: number
+                  available:
+                    type: number
+                required:
+                  - name
+                  - limit
+                  - available
+      responses:
+        '200':
+          description: '## Ok'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+        '400':
+          description: '## Bad Request'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  oneOf:
+                    - $ref: '#/components/schemas/Missing_Property_Error'
+                    - $ref: '#/components/schemas/Bad_Type_Error'
+                    - $ref: '#/components/schemas/Available_Constraint_Error'
+                    - $ref: '#/components/schemas/Envelopes_Limits_Constraint_Error'
+        default:
+          description: '## Error Schema'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Envelopes
+  /envelopes/{id}:
+    summary: Get specific envelopes data
+    description: Perform CRUD operations on a single envelope by id
+    get:
+      summary: Get a single envelope
+      description: Retrieve a single envelope by id
+      operationId: get_envelope_by_id
+      parameters:
+        - name: id
+          in: path
+          description: 'The id of the envelope.'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: '## Ok'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+        '404':
+          description: '## Not Found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Not_Found_Error'
+        default:
+          description: '## Error Schema'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Envelopes
+    put:
+      summary: Update a single envelope
+      description: Replace a single envelope by id with the provided one
+      operationId: replace_envelope_by_id
+      parameters:
+        - name: id
+          in: path
+          description: 'The id of the envelope.'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Replace Envelope Object
+        content:
+          application/json:
+            schema:
+                properties:
+                  name:
+                    type: string
+                  limit:
+                    type: number
+                  available:
+                    type: number
+                required:
+                  - name
+                  - limit
+                  - available
+      responses:
+        '200':
+          description: '## Ok'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope'
+        '400':
+          description: '## Bad Request'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  oneOf:
+                    - $ref: '#/components/schemas/Missing_Property_Error'
+                    - $ref: '#/components/schemas/Bad_Type_Error'
+                    - $ref: '#/components/schemas/Available_Constraint_Error'
+                    - $ref: '#/components/schemas/Envelopes_Limits_Constraint_Error'
+        '404':
+          description: '## Not Found'
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Not_Found_Error'
+        default:
+          description: '## Error Schema'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Envelopes
+    delete:
+      summary: Delete a single envelope
+      description: Delete a single envelope by id
+      operationId: delete_envelope_by_id
+      parameters:
+        - name: id
+          in: path
+          description: 'The id of the envelope.'
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: '## No Content'
+        '404':
+          description: '## Not Found'
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Not_Found_Error'
+        default:
+          description: '## Error Schema'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Envelopes
+  /expenses:
+    summary: Get expenses data
+    description: Get a list of all your expenses or create a new expense
+    get:
+      summary: Get a list of all your expenses
+      description: Get a list of all your expenses with the possibility to use optional filters
+      operationId: get_expenses
+      parameters:
+        - name: envelope
+          in: query
+          description: 'Allows to filter all expenses that belong to a specific envelope'
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: '## Ok'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Expenses'
+        default:
+          description: '## Error Schema'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Expenses
+    post:
+      summary: Create a new expense
+      description: Create a new expense and link it to an existing envelope
+      operationId: create_expense
+      requestBody:
+        description: Create Expense Object
+        content:
+          application/json:
+            schema:
+              properties:
+                amount:
+                  type: number
+                envelope:
+                  type: string
+              required:
+                - amount
+                - envelope
+      responses:
+        '200':
+          description: '## Ok'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Expense'
+        '400':
+          description: '## Bad Request'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  oneOf:
+                    - $ref: '#/components/schemas/Missing_Property_Error'
+                    - $ref: '#/components/schemas/Bad_Type_Error'
+                    - $ref: '#/components/schemas/Available_Constraint_Error'
+        default:
+          description: '## Error Schema'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Expenses
+  /expenses/{id}:
+    summary: Get a specific expense data
+    description: Get a specific expense data by id
+    delete:
+      summary: Delete an expense
+      description: Delete an expense by id
+      operationId: delete_expense_by_id
+      parameters:
+        - name: id
+          in: path
+          description: Id of the expense that you want to delete
+          required: true
+          schema:
+            type: number
+      responses:
+        '204':
+          description: '## No Content'
+        '404':
+          description: '## Not Found'
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Not_Found_Error'
+        default:
+          description: '## Error Schema'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Expenses
+externalDocs:
+  description: GitHub Repository for this project
+  url: 'https://github.com/n-alonso/backend_personal-finance-manager'
+components:
+  schemas:
+    Salary:
+      type: object
+      properties:
+        salary: 
+          type: number
+      required:
+       - salary
+    Envelopes:
+      type: array
+      items:
+        oneOf:
+          - $ref: "#/components/schemas/Envelope"
+    Envelope:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        limit:
+          type: number
+        available:
+          type: number
+      required:
+        - name
+        - limit
+        - available
+    Expenses:
+      type: array
+      items:
+        oneOf:
+          - $ref: "#/components/schemas/Expense"
+    Expense:
+      type: object
+      properties:
+        id:
+          type: number
+        amount:
+          type: number
+        envelope:
+          type: string
+      required:
+        - amount
+        - envelope
+    Error:
+      type: object
+      properties:
+        status:
+          type: number
+        error:
+          type: string
+    Missing_Property_Error:
+      type: object
+      properties:
+        status:
+          type: number
+          example: 400
+        error:
+          type: string
+          example: "Bad request. The property '{property}: {type}' is required."
+    Bad_Type_Error:
+      type: object
+      properties:
+        status:
+          type: number
+          example: 400
+        error:
+          type: string
+          example: "Bad request. The property '{property}' should have the type: '{type}'."
+    Envelopes_Limits_Constraint_Error:
+      type: object
+      properties:
+        status:
+          type: number
+          example: 400
+        error:
+          type: string
+          example: "Bad request. The sum of all 'limits' for all 'envelopes' cannot be higher than 'salary'."
+    Available_Constraint_Error:
+      type: object
+      properties:
+        status:
+          type: number
+          example: 400
+        error:
+          type: string
+          example: "Bad request. The envelope's limit cannot be exceeded."
+    Not_Found_Error:
+      type: object
+      properties:
+        status:
+          type: number
+          example: 404
+        error:
+          type: string
+          example: "'{path}/{id}' not found."

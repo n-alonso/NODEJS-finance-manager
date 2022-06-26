@@ -1,11 +1,11 @@
 const express = require('express')
 const envelopesRouter = express.Router()
-const { envelopes } = require('../app_modules/db')
+const { envelopes } = require('../../model/db')
 const { findEnvelopeByName,
     validateSchema,
     validateType,
     validateEnvelopeAmount,
-    validateLimitsVsSalary } = require('../app_modules/utilities')
+    validateLimitsVsSalary } = require('../utilities')
 
 envelopesRouter.param('name', findEnvelopeByName)
 

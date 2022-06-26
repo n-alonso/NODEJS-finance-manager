@@ -2,8 +2,8 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
-const envelopesRouter = require('./routers/envelopes.js')
-const salaryRouter = require('./routers/salary')
+const envelopesRouter = require('./controller/routes/envelopes.js')
+const salaryRouter = require('./controller/salary')
 
 // Parse body and log all requests
 app.use(bodyParser.json())

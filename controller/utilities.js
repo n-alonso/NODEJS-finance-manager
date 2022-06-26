@@ -1,4 +1,4 @@
-const db = require('./db')
+const db = require('../model/db')
 
 const findEnvelopeByName = (req, res, next) => {
     // Store the name provided in the path

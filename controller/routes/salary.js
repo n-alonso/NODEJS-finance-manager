@@ -1,7 +1,7 @@
 const express = require('express')
 const salaryRouter = express.Router()
-let salary = require('../app_modules/db').salary
-const { validateSchema, validateType, validateLimitsVsSalary } = require('../app_modules/utilities')
+let salary = require('../model/db').salary
+const { validateSchema, validateType, validateLimitsVsSalary } = require('./utilities')
 
 salaryRouter.get('/', (req, res, next) => {
     res.send({ salary: salary })
