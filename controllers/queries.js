@@ -1,7 +1,29 @@
 const pool = require('../models/db_config')
 
-// Salary
-const checkSalary = (req, res, next) => {
+// Utility Queries
+const doesIdExist = async (req, res, next) => {
+    const table = req.originalUrl.split('/')[1]
+    const id = req.params.id
+
+    pool.query(`
+        SELECT * FROM ${table}
+        WHERE id = $1;
+    `, [id], (error, response) => {
+        if (error) next(error)
+        if (response.rows.length === 0) {
+            let err = new Error(
+                "Bad request. '" + table + "' with 'id: " + id + "' not found."
+            )
+            err.code = 404
+            err.public = true
+            next(err)
+        } else {
+            next()
+        }
+    }) 
+}
+
+const doesSalaryExist = (req, res, next) => {
     pool.query(`
         SELECT COUNT(*) FROM salary;
     `, (error, results) => {
@@ -13,13 +35,16 @@ const checkSalary = (req, res, next) => {
             err.code = 400
             err.public = true
             next(err)
+        } else {
+            next()
         }
-        next()
     })
 }
 
+// Salary
 const createSalary = (req, res, next) => {
     const amount = req.body.amount
+
     pool.query(`
         INSERT INTO salary (amount)
         VALUEs ($1)
@@ -41,6 +66,7 @@ const getSalary = (req, res, next) => {
 
 const updateSalary = (req, res, next) => {
     const amount = req.body.amount
+
     pool.query(`
         UPDATE salary
         SET amount = $1
@@ -61,8 +87,12 @@ const getEnvelopes = (req, res, next) => {
     })
 }
 
+const createEnvelope = () => {}
+
+// Envelopes/id
 const getEnvelopeById = (req, res, next) => {
     const id = req.params.id
+    
     pool.query(`
         SELECT * FROM envelopes
         WHERE id = $1;
@@ -72,11 +102,24 @@ const getEnvelopeById = (req, res, next) => {
     })
 }
 
-const createEnvelope = () => {}
+const deleteEnvelopeById = async (req, res, next) => {
+    const id = req.params.id
+
+    await Promise.all([
+        pool.query(`DELETE FROM expenses WHERE envelope_id = $1 RETURNING *;`, [id]),
+        pool.query(`DELETE FROM envelopes WHERE id = $1 RETURNING *;`, [id])
+    ])
+        .then(([expensesResponse, envelopesResponse]) => {
+            res.status(200).json({
+                message: "Deleted the requested envelope and all associated expenses.",
+                deletedEnvelope: envelopesResponse.rows[0],
+                deletedExpenses: expensesResponse.rows
+            })
+        })
+        .catch(error => next(error))
+}
 
 const updateEnvelopeById = () => {}
-
-const deleteEnvelopeById = () => {}
 
 // Expenses
 const getExpenses = () => {}
@@ -86,10 +129,12 @@ const createExpense = () => {}
 const deleteExpenseById = () => {}
 
 module.exports = {
+    doesIdExist,
+    doesSalaryExist,
     getSalary,
     updateSalary,
     createSalary,
-    checkSalary,
     getEnvelopes,
-    getEnvelopeById
+    getEnvelopeById,
+    deleteEnvelopeById
 }

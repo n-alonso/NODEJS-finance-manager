@@ -1,6 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
+const db = require('./controllers/queries')
 
 const app = express()
 const salaryRouter = require('./controllers/routes/salary')

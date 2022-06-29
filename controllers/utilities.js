@@ -1,5 +1,6 @@
 const app = require('../server')
 
+// Utility functions
 const validateSalary = (req, res, next) => {
     const amount = req.body.amount
 
@@ -18,9 +19,9 @@ const validateSalary = (req, res, next) => {
         err.code = 400
         err.public = true
         next(err)
+    } else {
+        next()
     }
-
-    next()
 }
 
 module.exports = {
