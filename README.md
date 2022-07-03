@@ -8,7 +8,7 @@ Tech-stack:
  * Implementation code:
     * Node.js 
     * Express.js
-    * PostgreSQL __[Coming Soon]__
+    * PostgreSQL
  * Testing code:
     * Mocha __[Coming Soon]__
     * Chai __[Coming Soon]__
@@ -22,6 +22,7 @@ Tech-stack:
 
 1. [Installation](#installation)
 2. [Documentation](#documentation)
+   * Quickstart Guide __[Coming Soon]__
    * [OpenAPI Specification](#openapi-specification)
    * [Database](#database)
    * [Constraints](#constraints)
