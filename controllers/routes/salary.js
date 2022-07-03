@@ -3,8 +3,8 @@ const salaryRouter = express.Router()
 const db = require('../queries')
 const utils = require('../utilities')
 
-salaryRouter.post('/', utils.validateSalary, db.doesSalaryExist, db.createSalary)
+salaryRouter.post('/', utils.validateBody, db.doesSalaryExist, db.createSalary)
 salaryRouter.get('/', db.getSalary)
-salaryRouter.put('/', utils.validateSalary, db.updateSalary)
+salaryRouter.put('/', utils.validateBody, db.updateSalary)
 
 module.exports = salaryRouter
