@@ -45,30 +45,55 @@ const doesSalaryExist = (req, res, next) => {
 }
 
 const doesEnvelopeExist = (req, res, next) => {
-    const name = req.body.name
+    const envelope = req.body.name || req.body.envelope_id
 
-    pool.query(`
-        SELECT COUNT(*) FROM envelopes
-        WHERE name = $1;
-    `, [name], (error, results) => {
-        if (error) {
-            next(error)
-        } else if (results.rows[0].count > 0) {
-            let err = new Error(
-                `Bad request. An 'envelope' with 'name: ${name}' already exists.`
-            )
-            err.code = 400
-            err.public = true
-            next(err)
-        } else {
-            next()
-        }
-    })
+    if (req.body.name) {
+        pool.query(`
+            SELECT COUNT(*) FROM envelopes
+            WHERE name = $1;
+        `, [envelope], (error, results) => {
+            if (error) {
+                next(error)
+            } else if (results.rows[0].count > 0) {
+                let err = new Error(
+                    `Bad request. An 'envelope' with 'name: ${envelope}' already exists.`
+                )
+                err.code = 400
+                err.public = true
+                next(err)
+            } else {
+                next()
+            }
+        })
+    }
+    if (req.body.envelope_id) {
+        pool.query(`
+            SELECT COUNT(*) FROM envelopes
+            WHERE id = $1;
+        `, [envelope], (error, results) => {
+            if (error) {
+                throw error
+            } else {
+                if (results.rows[0].count > 1) {
+                    return true  
+                } else {
+                    let err = new Error(
+                        `Bad request. 'Envelope' with 'id: ${envelope}' does not exist.`
+                    )
+                    err.code = 400
+                    err.public = true
+                    throw err
+                }
+            }
+        })
+    }
 }
 
-const validateSumOfAllEnvelopesVsSalary = async (req, endpoint) => {
+const validateSumOfAllAmounts = async (req, endpoint) => {
 
     let sum;
+    let results;
+
     if (endpoint === 'envelopes') {
         if (req.method === 'POST') {
             pool.query(`SELECT SUM(spending_limit) FROM envelopes;`, (error, results) => {
@@ -82,7 +107,6 @@ const validateSumOfAllEnvelopesVsSalary = async (req, endpoint) => {
             })
         }
         if (req.method === 'PUT') {
-            console.log('put')
             Promise.all([
                 pool.query(`SELECT SUM(spending_limit) FROM envelopes;`),
                 pool.query(`SELECT spending_limit FROM envelopes WHERE name = ${req.body.name};`)
@@ -93,26 +117,64 @@ const validateSumOfAllEnvelopesVsSalary = async (req, endpoint) => {
                     sum = envelopesQueryResult + (Math.abs(singleEnvelopeQueryResult - req.body.spending_limit))
                 })
         }
+
+        results = await Promise.all([
+            pool.query(`SELECT SUM(spending_limit) FROM envelopes;`),
+            pool.query(`SELECT * FROM salary;`)
+        ])
+            .then(([envelopesResponse, salaryResponse]) => {
+                const envelopesLimitsSum = sum || Number(envelopesResponse.rows[0].sum)
+                const salaryAmount = req.body.amount || Number(salaryResponse.rows[0].amount)
+    
+                if (envelopesLimitsSum > salaryAmount) {
+                    let err = new Error(
+                        `Bad request. The sum of all 'envelopes.spending_limit: ${envelopesLimitsSum}' cannot be higher than 'salary.amount: ${salaryAmount}'.`
+                    )
+                    err.code = 400
+                    err.public = true
+                    throw err
+                }
+            })
+            .catch(error => { throw error })
     }
-
-    const results = await Promise.all([
-        pool.query(`SELECT SUM(spending_limit) FROM envelopes;`),
-        pool.query(`SELECT * FROM salary;`)
-    ])
-        .then(([envelopesResponse, salaryResponse]) => {
-            const envelopesLimitsSum = sum || Number(envelopesResponse.rows[0].sum)
-            const salaryAmount = req.body.amount || Number(salaryResponse.rows[0].amount)
-
-            if (envelopesLimitsSum > salaryAmount) {
-                let err = new Error(
-                    `Bad request. The sum of all envelopes 'envelopes.spending_limit: ${envelopesLimitsSum}' cannot be higher than 'salary.amount: ${salaryAmount}'.`
-                )
-                err.code = 400
-                err.public = true
-                throw err
+    
+    if (endpoint === 'expenses') {
+        pool.query(`
+            SELECT SUM(amount) FROM expenses
+            WHERE envelope_id = ${req.body.envelope_id};
+        `, (error, results) => {
+            if (error) {
+                throw error
+            } else {
+                const queryResult = Number(results.rows[0].sum)
+                const amount = Number(req.body.amount)
+                sum = queryResult + amount
             }
         })
-        .catch(error => { throw error })
+
+        let available;
+        pool.query(`
+            SELECT spending_available FROM envelopes
+            WHERE id = ${req.body.envelope_id};
+        `, (error, results) => {
+            if (error) {
+                throw error
+            } else {
+                available = Number(results.rows[0].spending_available)
+            }
+        })
+
+        if (sum > available) {
+            let err = new Error(
+                `Bad request. The sum of all 'expenses.amount: ${sum}' cannot be higher than 'envelope.spending_available: ${available}'.`
+            )
+            err.code = 400
+            err.public = true
+            throw err
+        } else {
+            results = sum
+        }
+    }
 
     return results
 }
@@ -249,17 +311,87 @@ const updateEnvelopeById = (req, res, next) => {
 }
 
 // Expenses
-const getExpenses = () => {}
+const getExpenses = (req, res, next) => {
+    pool.query(`
+        SELECT * FROM expenses;
+    `, (error, results) => {
+        if (error) {
+            next(error)
+        } else {
+            res.status(200).json(results.rows)
+        }
+    })
+}
 
-const createExpense = () => {}
+const createExpense = (req, res, next) => {
+    const amount = req.body.amount
+    const id = req.body.envelope_id
+    const description = req.body.description
 
-const deleteExpenseById = () => {}
+    pool.query(`
+        INSERT INTO expenses (amount, envelope_id, description)
+        VALUES ($1, $2, $3)
+        RETURNING *;
+    `, [amount, id, description], (error, results) => {
+        if (error) {
+            next(error)
+        } else {
+            res.status(201).json(results.rows[0])
+        }
+    })
+}
+
+const deleteExpenses = (req, res, next) => {
+    const envelope = req.query.envelope_id
+
+    if (!envelope) {
+        pool.query(`
+            TRUNCATE expenses;
+        `, (error, results) => {
+            if (error) {
+                next(error)
+            } else {
+                res.status(204).json(results.rows)
+            }
+        })
+    }
+    if (envelope) {
+        pool.query(`
+            DELETE FROM expenses
+            WHERE envelope_id = $1
+            RETURNING *;
+        `, [envelope], (error, results) => {
+            if (error) {
+                next(error)
+            } else {
+                res.status(200).json(results.rows)
+            }
+        })
+    }
+    
+}
+
+const deleteExpenseById = (req, res, next) => {
+    const id = req.params.id
+
+    pool.query(`
+        DELETE FROM expenses
+        WHERE id = $1
+        RETURNING *;
+    `, [id], (error, results) => {
+        if (error) {
+            next(error)
+        } else {
+            res.status(200).json(results.rows[0])
+        }
+    })
+}
 
 module.exports = {
     doesIdExist,
     doesSalaryExist,
     doesEnvelopeExist,
-    validateSumOfAllEnvelopesVsSalary,
+    validateSumOfAllAmounts,
     getSalary,
     updateSalary,
     createSalary,
@@ -267,5 +399,9 @@ module.exports = {
     createEnvelope,
     getEnvelopeById,
     deleteEnvelopeById,
-    updateEnvelopeById
+    updateEnvelopeById,
+    getExpenses,
+    createExpense,
+    deleteExpenses,
+    deleteExpenseById
 }

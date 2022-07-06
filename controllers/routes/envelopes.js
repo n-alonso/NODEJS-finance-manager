@@ -12,4 +12,7 @@ envelopesRouter.get('/:id', db.getEnvelopeById)
 envelopesRouter.delete('/:id', db.deleteEnvelopeById)
 envelopesRouter.put('/:id', utils.validateBody, db.updateEnvelopeById)
 
+envelopesRouter.use('/', utils.handleInvalidMethods)
+envelopesRouter.use('/:id', utils.handleInvalidMethods)
+
 module.exports = envelopesRouter

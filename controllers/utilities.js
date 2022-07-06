@@ -1,3 +1,4 @@
+const pool = require('../models/db_config')
 const db = require('./queries')
 
 const schema = {
@@ -9,7 +10,46 @@ const schema = {
         spending_limit: 'number',
         spending_available: 'number'
     },
-    expenses: {}
+    expenses: {
+        amount: 'number',
+        envelope_id: 'number',
+        description: "string"
+    }
+}
+
+// General functions
+const handleInvalidPaths = (req, res, next) => {
+    let err = new Error(
+        `Not found. Invalid path.`
+    )
+    err.code = 404
+    err.public = true
+    next(err)
+}
+
+const handleInvalidMethods = (req, res, next) => {
+    const method = req.method
+
+    let err = new Error(
+        `Bad request. Invalid method: ${method}.`
+    )
+    err.code = 405
+    err.public = true
+    next(err)
+}
+
+const handleErrors = (err, req, res, next) => {
+    if (err.public) {
+        res.send({
+            code: err.code,
+            error: err.message
+        })
+    } else {
+        res.send({
+            code: 500,
+            error: err.stack
+        })
+    }
 }
 
 // Utility functions
@@ -54,10 +94,13 @@ const validateSalary = req => {
         )
         err.code = 400
         err.public = true
-        return err
-    } else {
-        return
+        throw err
     }
+}
+
+const validateExpense = req => {
+    db.doesEnvelopeExist(req)
+    db.validateSumOfAllExpensesVsEnvelope(req)
 }
 
 
@@ -81,16 +124,17 @@ const validateBody = async (req, res, next) => {
     }
 
     try {
-        const structure = validateStructure(req, endpoint, requestSchema)
+        validateStructure(req, endpoint, requestSchema)
     
         if (endpoint === 'salary') {
             validateSalary(req)
-            await db.validateSumOfAllEnvelopesVsSalary(req, endpoint)
+            await db.validateSumOfAllAmounts(req, endpoint)
         } else if (endpoint === 'envelopes') {
             validateEnvelope(req)
-            await db.validateSumOfAllEnvelopesVsSalary(req, endpoint)
+            await db.validateSumOfAllAmounts(req, endpoint)
         } else if (endpoint === 'expenses') {
-            //
+            validateExpense(req)
+            await db.validateSumOfAllAmounts(req, endpoint)
         } 
     } catch (error) {
         next(error)
@@ -102,6 +146,9 @@ const validateBody = async (req, res, next) => {
 
 module.exports = {
     schema,
+    handleInvalidPaths,
+    handleInvalidMethods,
+    handleErrors,
     validateStructure,
     validateEnvelope,
     validateSalary,
