@@ -35,7 +35,7 @@ To install it, follow these steps:
  * Navigate to the local repository `cd <file_path>`
  * Install this project's dependencies `npm install`
  * Run the project `npm start`
- * Test the project `npm test`
+ * Test the project `npm test` __[Coming Soon}__
 
 ## Documentation
 
@@ -53,8 +53,11 @@ Or perform [Database Queries]() directly __[Coming Soon]__
 ### Constraints
 
 * All properties within the schemas are mandatory for all endpoints and methods exept `id`
-* All properties supplied must have values with correct data types
-* The sum of all `envelopes.spending_limit` cannot be higher than the value of `salary.amount`
-* When updating an envelope, the value of `spending_available` cannot be higher than the value of `spending_limit`
+* You are not expected to provide `id` in any endpoint
+* All properties provided must have values with correct data types
 * Cannot create an already existing resource
+* `salary.amount` cannot be lower than `0`
+* The sum of all `envelopes.spending_limit` cannot be higher than the value of `salary.amount`
+* When creating/updating an envelope, the value of `spending_available` cannot be higher than the value of `spending_limit`
 * Deleting an envelope will delete all related expenses
+* When creating an expense the `amount` will be deducted to the realted `envelope.spending_available`. The result of that operation cannot be lower than `0`
