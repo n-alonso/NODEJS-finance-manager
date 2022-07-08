@@ -100,7 +100,7 @@ const validateSalary = req => {
 
 const validateExpense = req => {
     db.doesEnvelopeExist(req)
-    db.validateSumOfAllExpensesVsEnvelope(req)
+    db.validateSumOfAllAmounts(req)
 }
 
 

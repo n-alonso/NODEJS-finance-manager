@@ -92,91 +92,90 @@ const doesEnvelopeExist = (req, res, next) => {
 const validateSumOfAllAmounts = async (req, endpoint) => {
 
     let sum;
-    let results;
+    let result;
 
-    if (endpoint === 'envelopes') {
-        if (req.method === 'POST') {
-            pool.query(`SELECT SUM(spending_limit) FROM envelopes;`, (error, results) => {
-                if (error) {
-                    throw error
-                } else {
-                    const queryResult = Number(results.rows[0].sum)
-                    const inputLimit = req.body.spending_limit
-                    sum = queryResult + inputLimit
-                }
-            })
-        }
-        if (req.method === 'PUT') {
-            Promise.all([
-                pool.query(`SELECT SUM(spending_limit) FROM envelopes;`),
-                pool.query(`SELECT spending_limit FROM envelopes WHERE name = ${req.body.name};`)
-            ])
-                .then(([envelopesResponse, envelopeResponse]) => {
-                    const envelopesQueryResult = Number(envelopesResponse.rows[0].sum)
-                    const singleEnvelopeQueryResult = Number(envelopeResponse.rows[0].spending_limit)
-                    sum = envelopesQueryResult + (Math.abs(singleEnvelopeQueryResult - req.body.spending_limit))
-                })
-        }
-
-        results = await Promise.all([
-            pool.query(`SELECT SUM(spending_limit) FROM envelopes;`),
-            pool.query(`SELECT * FROM salary;`)
-        ])
-            .then(([envelopesResponse, salaryResponse]) => {
-                const envelopesLimitsSum = sum || Number(envelopesResponse.rows[0].sum)
-                const salaryAmount = req.body.amount || Number(salaryResponse.rows[0].amount)
-    
-                if (envelopesLimitsSum > salaryAmount) {
-                    let err = new Error(
-                        `Bad request. The sum of all 'envelopes.spending_limit: ${envelopesLimitsSum}' cannot be higher than 'salary.amount: ${salaryAmount}'.`
-                    )
-                    err.code = 400
-                    err.public = true
-                    throw err
-                }
-            })
-            .catch(error => { throw error })
-    }
-    
-    if (endpoint === 'expenses') {
-        pool.query(`
-            SELECT SUM(amount) FROM expenses
-            WHERE envelope_id = ${req.body.envelope_id};
-        `, (error, results) => {
+    if (req.method === 'POST') {
+        pool.query(`SELECT SUM(spending_limit) FROM envelopes;`, (error, results) => {
             if (error) {
                 throw error
             } else {
                 const queryResult = Number(results.rows[0].sum)
-                const amount = Number(req.body.amount)
-                sum = queryResult + amount
+                const inputLimit = req.body.spending_limit
+                sum = queryResult + inputLimit
             }
         })
-
-        let available;
-        pool.query(`
-            SELECT spending_available FROM envelopes
-            WHERE id = ${req.body.envelope_id};
-        `, (error, results) => {
-            if (error) {
-                throw error
-            } else {
-                available = Number(results.rows[0].spending_available)
-            }
-        })
-
-        if (sum > available) {
-            let err = new Error(
-                `Bad request. The sum of all 'expenses.amount: ${sum}' cannot be higher than 'envelope.spending_available: ${available}'.`
-            )
-            err.code = 400
-            err.public = true
-            throw err
-        } else {
-            results = sum
-        }
+    }
+    if (req.method === 'PUT') {
+        Promise.all([
+            pool.query(`SELECT SUM(spending_limit) FROM envelopes;`),
+            pool.query(`SELECT spending_limit FROM envelopes WHERE name = ${req.body.name};`)
+        ])
+            .then(([envelopesResponse, envelopeResponse]) => {
+                const envelopesQueryResult = Number(envelopesResponse.rows[0].sum)
+                const singleEnvelopeQueryResult = Number(envelopeResponse.rows[0].spending_limit)
+                sum = envelopesQueryResult + (Math.abs(singleEnvelopeQueryResult - req.body.spending_limit))
+            })
     }
 
-    return results
+    result = await Promise.all([
+        pool.query(`SELECT SUM(spending_limit) FROM envelopes;`),
+        pool.query(`SELECT * FROM salary;`)
+    ])
+        .then(([envelopesResponse, salaryResponse]) => {
+            const envelopesLimitsSum = sum || Number(envelopesResponse.rows[0].sum)
+            const salaryAmount = req.body.amount || Number(salaryResponse.rows[0].amount)
+
+            if (envelopesLimitsSum > salaryAmount) {
+                let err = new Error(
+                    `Bad request. The sum of all 'envelopes.spending_limit: ${envelopesLimitsSum}' cannot be higher than 'salary.amount: ${salaryAmount}'.`
+                )
+                err.code = 400
+                err.public = true
+                throw err
+            }
+        })
+        .catch(error => { throw error })
+
+    return result
+}
+
+const substractExpenseFromEnvelope = (req, res, next) => {
+    let available;
+
+    pool.query(`
+        UPDATE envelopes
+        SET spending_available = spending_available - ${req.body.amount}
+        WHERE id = ${req.body.envelope_id}
+        RETURNING spending_available;
+    `, (error, results) => {
+        if (error) {
+            next(error)
+        } else {
+            if (results.rows[0].spending_available < 0) {
+                available = results.rows[0].spending_available
+
+                pool.query(`
+                UPDATE envelopes
+                SET spending_available = spending_available + ${req.body.amount}
+                WHERE id = ${req.body.envelope_id}
+                RETURNING spending_available;
+                `, (error, results) => {
+                    if (error) {
+                        next(error)
+                    } else {
+                        let err = new Error(
+                            `Bad request. The resulting 'spending_available: ${available}' from subtracting 'amount' from the asociated envelope cannot be lower than '0'.`
+                        )
+                        err.code = 400
+                        err.public = true
+                        next(err)
+                    }
+                })
+            } else {
+                next()
+            }
+        }
+    })
 }
 
 // Salary
@@ -392,6 +391,7 @@ module.exports = {
     doesSalaryExist,
     doesEnvelopeExist,
     validateSumOfAllAmounts,
+    substractExpenseFromEnvelope,
     getSalary,
     updateSalary,
     createSalary,

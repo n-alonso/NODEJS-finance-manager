@@ -6,7 +6,7 @@ const utils = require('../utilities')
 expensesRouter.param('id', db.doesIdExist)
 
 expensesRouter.get('/', db.getExpenses)
-expensesRouter.post('/', db.createExpense)
+expensesRouter.post('/', db.substractExpenseFromEnvelope, db.createExpense)
 expensesRouter.delete('/', db.deleteExpenses)
 
 expensesRouter.delete('/:id', db.deleteExpenseById)
