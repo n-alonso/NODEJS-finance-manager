@@ -8,7 +8,7 @@ Tech-stack:
  * Implementation code:
     * Node.js 
     * Express.js
-    * PostgreSQL __[Coming Soon]__
+    * PostgreSQL
  * Testing code:
     * Mocha __[Coming Soon]__
     * Chai __[Coming Soon]__
@@ -22,6 +22,7 @@ Tech-stack:
 
 1. [Installation](#installation)
 2. [Documentation](#documentation)
+   * Quickstart Guide __[Coming Soon]__
    * [OpenAPI Specification](#openapi-specification)
    * [Database](#database)
    * [Constraints](#constraints)
@@ -51,9 +52,9 @@ Or perform [Database Queries]() directly __[Coming Soon]__
 
 ### Constraints
 
-* The sum of all `limit`s cannot be higher than the value of `salary`
-* When updating an envelope, the value of `available` cannot be higher than the value of `limit`
-* All properties within the schemas are mandatory for all methods exept PATCH
-* For PATCH requests all properties are optional
+* All properties within the schemas are mandatory for all endpoints and methods exept `id`
 * All properties supplied must have values with correct data types
-
+* The sum of all `envelopes.spending_limit` cannot be higher than the value of `salary.amount`
+* When updating an envelope, the value of `spending_available` cannot be higher than the value of `spending_limit`
+* Cannot create an already existing resource
+* Deleting an envelope will delete all related expenses
