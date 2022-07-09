@@ -28,7 +28,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Salary'
         default:
-          description: '## Error Schema'
+          description: '## Server Error'
           content:
             application/json:
               schema:
@@ -37,7 +37,7 @@ paths:
         - Salary
     put:
       summary: Update your salary information
-      description: Change the current value of your salary for the provided one
+      description: Change the current amount of your salary for the provided one
       operationId: update_salary
       requestBody:
         description: Update Salary Object
@@ -57,14 +57,9 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  oneOf:
-                    - $ref: '#/components/schemas/Missing_Property_Error'
-                    - $ref: '#/components/schemas/Bad_Type_Error'
-                    - $ref: '#/components/schemas/Envelopes_Limits_Constraint_Error'
+                $ref: '#/components/schemas/400_Error'
         default:
-          description: '## Error Schema'
+          description: '## Server Error'
           content:
             application/json:
               schema:
@@ -86,7 +81,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Envelopes'
         default:
-          description: '## Error Schema'
+          description: '## Server Error'
           content:
             application/json:
               schema:
@@ -105,14 +100,14 @@ paths:
                 properties:
                   name:
                     type: string
-                  limit:
+                  spending_limit:
                     type: number
-                  available:
+                  spending_available:
                     type: number
                 required:
                   - name
-                  - limit
-                  - available
+                  - spending_limit
+                  - spending_available
       responses:
         '200':
           description: '## Ok'
@@ -125,15 +120,9 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  oneOf:
-                    - $ref: '#/components/schemas/Missing_Property_Error'
-                    - $ref: '#/components/schemas/Bad_Type_Error'
-                    - $ref: '#/components/schemas/Available_Constraint_Error'
-                    - $ref: '#/components/schemas/Envelopes_Limits_Constraint_Error'
+                $ref: '#/components/schemas/400_Error'
         default:
-          description: '## Error Schema'
+          description: '## Server Error'
           content:
             application/json:
               schema:
@@ -166,9 +155,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Not_Found_Error'
+                $ref: '#/components/schemas/404_Error'
         default:
-          description: '## Error Schema'
+          description: '## Server Error'
           content:
             application/json:
               schema:
@@ -177,8 +166,8 @@ paths:
         - Envelopes
     put:
       summary: Update a single envelope
-      description: Replace a single envelope by id with the provided one
-      operationId: replace_envelope_by_id
+      description: Update a single envelope by id with the provided one
+      operationId: update_envelope_by_id
       parameters:
         - name: id
           in: path
@@ -187,21 +176,21 @@ paths:
           schema:
             type: string
       requestBody:
-        description: Replace Envelope Object
+        description: Update Envelope Object
         content:
           application/json:
             schema:
                 properties:
                   name:
                     type: string
-                  limit:
+                  spending_limit:
                     type: number
-                  available:
+                  spending_available:
                     type: number
                 required:
                   - name
-                  - limit
-                  - available
+                  - spending_limit
+                  - spending_available
       responses:
         '200':
           description: '## Ok'
@@ -214,21 +203,15 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  oneOf:
-                    - $ref: '#/components/schemas/Missing_Property_Error'
-                    - $ref: '#/components/schemas/Bad_Type_Error'
-                    - $ref: '#/components/schemas/Available_Constraint_Error'
-                    - $ref: '#/components/schemas/Envelopes_Limits_Constraint_Error'
+                $ref: '#/components/schemas/400_Error'
         '404':
           description: '## Not Found'
           content:
             application/json:
               schema:
-                  $ref: '#/components/schemas/Not_Found_Error'
+                $ref: '#/components/schemas/404_Error'
         default:
-          description: '## Error Schema'
+          description: '## Server Error'
           content:
             application/json:
               schema:
@@ -247,16 +230,29 @@ paths:
           schema:
             type: string
       responses:
-        '204':
-          description: '## No Content'
+        '200':
+          description: '## Ok'
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: Deleted the requested envelope and all associated expenses
+                  deletedEnvelope:
+                    type: object
+                    example: Object
+                  deletedExpenses:
+                    type: object
+                    example: Array
         '404':
           description: '## Not Found'
           content:
             application/json:
               schema:
-                  $ref: '#/components/schemas/Not_Found_Error'
+                  $ref: '#/components/schemas/404_Error'
         default:
-          description: '## Error Schema'
+          description: '## Server Error'
           content:
             application/json:
               schema:
@@ -265,18 +261,11 @@ paths:
         - Envelopes
   /expenses:
     summary: Get expenses data
-    description: Get a list of all your expenses or create a new expense
+    description: Get/delete all your expenses or create a new one
     get:
       summary: Get a list of all your expenses
-      description: Get a list of all your expenses with the possibility to use optional filters
+      description: Get a list of all your expenses
       operationId: get_expenses
-      parameters:
-        - name: envelope
-          in: query
-          description: 'Allows to filter all expenses that belong to a specific envelope'
-          required: false
-          schema:
-            type: string
       responses:
         '200':
           description: '## Ok'
@@ -285,7 +274,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Expenses'
         default:
-          description: '## Error Schema'
+          description: '## Server Error'
           content:
             application/json:
               schema:
@@ -304,11 +293,14 @@ paths:
               properties:
                 amount:
                   type: number
-                envelope:
+                envelope_id:
+                  type: number
+                description:
                   type: string
               required:
                 - amount
-                - envelope
+                - envelope_id
+                - description
       responses:
         '200':
           description: '## Ok'
@@ -321,14 +313,35 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  oneOf:
-                    - $ref: '#/components/schemas/Missing_Property_Error'
-                    - $ref: '#/components/schemas/Bad_Type_Error'
-                    - $ref: '#/components/schemas/Available_Constraint_Error'
+                $ref: '#/components/schemas/400_Error'
         default:
-          description: '## Error Schema'
+          description: '## Server Error'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Expenses
+    delete:
+      summary: Delete expenses data
+      description: Delete all expenses
+      operationId: delete_expenses_by_id
+      parameters:
+        - name: envelope_id
+          in: query
+          description: To delete all expenses related to this envelope
+          required: false
+          schema:
+            type: number
+      responses:
+        '200':
+          description: '## Ok'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Expense'
+        default:
+          description: '## Server Error'
           content:
             application/json:
               schema:
@@ -336,8 +349,8 @@ paths:
       tags:
         - Expenses
   /expenses/{id}:
-    summary: Get a specific expense data
-    description: Get a specific expense data by id
+    summary: Delete a specific expense data
+    description: Delete a specific expense data by id
     delete:
       summary: Delete an expense
       description: Delete an expense by id
@@ -350,16 +363,20 @@ paths:
           schema:
             type: number
       responses:
-        '204':
-          description: '## No Content'
+        '200':
+          description: '## Ok'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Expense'
         '404':
           description: '## Not Found'
           content:
             application/json:
               schema:
-                  $ref: '#/components/schemas/Not_Found_Error'
+                  $ref: '#/components/schemas/404_Error'
         default:
-          description: '## Error Schema'
+          description: '## Server Error'
           content:
             application/json:
               schema:
@@ -374,7 +391,7 @@ components:
     Salary:
       type: object
       properties:
-        salary: 
+        amount: 
           type: number
       required:
        - salary
@@ -383,6 +400,7 @@ components:
       items:
         oneOf:
           - $ref: "#/components/schemas/Envelope"
+          - $ref: "#/components/schemas/Envelope"
     Envelope:
       type: object
       properties:
@@ -390,9 +408,9 @@ components:
           type: number
         name:
           type: string
-        limit:
+        spending_limit:
           type: number
-        available:
+        spending_available:
           type: number
       required:
         - name
@@ -403,6 +421,7 @@ components:
       items:
         oneOf:
           - $ref: "#/components/schemas/Expense"
+          - $ref: "#/components/schemas/Expense"
     Expense:
       type: object
       properties:
@@ -410,19 +429,24 @@ components:
           type: number
         amount:
           type: number
-        envelope:
+        envelope_id:
+          type: number
+        description:
           type: string
       required:
         - amount
-        - envelope
+        - envelope_id
+        - description
     Error:
       type: object
       properties:
         status:
           type: number
+          example: 500
         error:
           type: string
-    Missing_Property_Error:
+          example: Error.stack
+    400_Error:
       type: object
       properties:
         status:
@@ -430,35 +454,8 @@ components:
           example: 400
         error:
           type: string
-          example: "Bad request. The property '{property}: {type}' is required."
-    Bad_Type_Error:
-      type: object
-      properties:
-        status:
-          type: number
-          example: 400
-        error:
-          type: string
-          example: "Bad request. The property '{property}' should have the type: '{type}'."
-    Envelopes_Limits_Constraint_Error:
-      type: object
-      properties:
-        status:
-          type: number
-          example: 400
-        error:
-          type: string
-          example: "Bad request. The sum of all 'limits' for all 'envelopes' cannot be higher than 'salary'."
-    Available_Constraint_Error:
-      type: object
-      properties:
-        status:
-          type: number
-          example: 400
-        error:
-          type: string
-          example: "Bad request. The envelope's limit cannot be exceeded."
-    Not_Found_Error:
+          example: Bad request. + error.message.
+    404_Error:
       type: object
       properties:
         status:
@@ -466,4 +463,4 @@ components:
           example: 404
         error:
           type: string
-          example: "'{path}/{id}' not found."
+          example: Not found. + error.message.
