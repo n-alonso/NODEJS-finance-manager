@@ -56,7 +56,7 @@ const handleErrors = (err, req, res, next) => {
 const validateStructure = (req, endpoint, requestSchema) => {
     const array = Object.keys(requestSchema)
     for (const key of array) {
-        if (!req.body[key]) {
+        if (typeof req.body[key] === 'undefined') {
             let err = new Error(
                 `Bad request. Expected '${endpoint}.${key}: ${requestSchema[key]}' in the body of the request.`
             )
