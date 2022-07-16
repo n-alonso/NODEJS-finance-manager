@@ -108,7 +108,7 @@ const validateSumOfAllAmounts = async (req, endpoint) => {
     if (req.method === 'PUT') {
         Promise.all([
             pool.query(`SELECT SUM(spending_limit) FROM envelopes;`),
-            pool.query(`SELECT spending_limit FROM envelopes WHERE name = ${req.body.name};`)
+            pool.query(`SELECT spending_limit FROM envelopes WHERE id = ${req.params.id};`)
         ])
             .then(([envelopesResponse, envelopeResponse]) => {
                 const envelopesQueryResult = Number(envelopesResponse.rows[0].sum)
@@ -294,13 +294,13 @@ const updateEnvelopeById = (req, res, next) => {
     const id = req.params.id
 
     pool.query(`
-        UPDAtE envelopes
-        SET name = $1
-        AND spending_limit = $2
-        AND spending_available = $3
-        WHERE id = $4
+        UPDATE envelopes
+        SET name = '${name}',
+            spending_limit = ${limit},
+            spending_available = ${available}
+        WHERE id = ${id}
         RETURNING *;
-    `, [name, limit, available, id], (error, results) => {
+    `, (error, results) => {
         if (error) {
             next(error)
         } else {
