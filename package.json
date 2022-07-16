@@ -16,7 +16,8 @@
   "main": "server.js",
   "scripts": {
     "test": "mocha --exit",
-    "start": "nodemon server.js"
+    "start": "node server.js",
+    "start-dev": "nodemon server.js"
   },
   "directories": {
     "test": "test"
