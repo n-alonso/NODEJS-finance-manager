@@ -14,7 +14,7 @@ Tech-stack:
     * Chai
     * Supertest
  * Deployment:
-    * Heroku __[Coming Soon]__
+    * Heroku 
  * Documentation:
     * OpenAPI Specification
 
@@ -35,8 +35,8 @@ To install it, follow these steps:
  * Clone this project locally
  * Navigate to the local repository `cd <file_path>`
  * Install this project's dependencies `npm install`
- * Run the project `npm start`
- * Test the project `npm test` __[Coming Soon}__
+ * Run the project `npm start` or `npm start-dev` for Nodemon
+ * Test the project `npm test` 
 
 ## Documentation
 
@@ -46,7 +46,7 @@ TBD
 
 ### OpenAPI Specification
 
-Please discover this API via it's Swagger UI represented OpenAPI Specification __[Coming Soon]__
+Please discover this API via it's [Swagger UI](https://pfm-api.herokuapp.com/ui/) represented OpenAPI Specification
 
 ### Database
 
