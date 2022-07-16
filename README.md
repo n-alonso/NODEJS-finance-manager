@@ -42,7 +42,37 @@ To install it, follow these steps:
 
 ### Quickstart Guide __[Coming Soon]__
 
-TBD
+1. Get familar with the API via exploring the [OpenAPI Specification](#openapi-specification)
+2. First you will need to update your Salary:
+   ```
+   curl --location --request PUT 'https://pfm-api.herokuapp.com/salary' \
+   --header 'Content-Type: application/json' \
+   --data-raw '{
+       "amount": {{your_salary}}
+   }'
+   ```
+   The response will include the updated salary.
+3. Now that you have set your Salary, you will need to create your expense categories:
+   ```
+   curl --location --request POST 'http://localhost:3000/envelopes' \
+   --header 'Content-Type: application/json' \
+   --data-raw '{
+       "name": {{envelope_name}},
+       "spending_limit": {{envelope_limit}},
+       "spending_available": {{envelope_available}}
+   }'
+   ```
+4. Start logging expenses:
+   ```
+   curl --location --request POST 'http://localhost:3000/expenses' \
+   --header 'Content-Type: application/json' \
+   --data-raw '{
+       "amount": {{expense_amount}},
+       "envelope_id": {{envelope_id}},
+       "description": {{expense_description}}
+   }'
+   ```
+5. Next steps: Import this project's OpenAPI Specification into Postman to generate a Postman Collection.
 
 ### OpenAPI Specification
 
