@@ -1,11 +1,10 @@
 const Pool = require('pg').Pool
 
 const pool = new Pool({
-    user: 'me',
-    password: 'password',
-    database: 'model',
-    host: 'localhost',
-    port: 5432
+    connectionString: process.env.DATABASE_URL,	// use DATABASE_URL environment variable from Heroku app 
+    ssl: {
+      rejectUnauthorized: false // don't check for SSL cert
+    }
 })
 
 module.exports = pool
