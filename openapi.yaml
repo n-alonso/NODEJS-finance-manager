@@ -12,6 +12,9 @@ info:
   license:
     name: ISC Licence
     url: https://en.wikipedia.org/wiki/ISC_license
+servers:
+  - url: https://pfm-api.herokuapp.com/
+    description: Production server
 paths:
   /salary:
     summary: Get salary data
