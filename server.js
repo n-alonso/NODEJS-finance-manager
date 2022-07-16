@@ -9,14 +9,16 @@ const salaryRouter = require('./controllers/routes/salary')
 const envelopesRouter = require('./controllers/routes/envelopes.js')
 const expensesRouter = require('./controllers/routes/expenses')
 
+const swaggerUi = require('swagger-ui-express')
+const YAML = require('yamljs')
+const swaggerDocument = YAML.load('./openapi.yaml')
+
 app.use(bodyParser.json())
 app.use(morgan('dev', { 
     skip: (req, res) => process.env.NODE_ENV === 'test'
  }))
 
-app.get('/', (req, res) => {
-    res.send({ "test": "this is a test response" })
-})
+app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 app.use('/salary', salaryRouter)
 app.use('/envelopes', envelopesRouter)
