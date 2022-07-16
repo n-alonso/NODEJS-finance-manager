@@ -18,7 +18,7 @@ app.use(morgan('dev', {
     skip: (req, res) => process.env.NODE_ENV === 'test'
  }))
 
-app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
+app.get('/', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 app.use('/salary', salaryRouter)
 app.use('/envelopes', envelopesRouter)
