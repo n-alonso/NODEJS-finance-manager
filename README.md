@@ -51,7 +51,7 @@ Please discover this API via it's Swagger UI represented OpenAPI Specification _
 ### Database
 
 Explore the [Database Schema](https://dbdiagram.io/d/62b8326969be0b672c421b5d):  
-![image](https://user-images.githubusercontent.com/63936366/179350669-e0fbfa41-6266-4525-a472-73646a1bcca2.png)
+![image](https://user-images.githubusercontent.com/63936366/179350799-3e0cbb19-a7de-474d-be84-e4cb92d3d7e3.png)
 
 Or perform Database Queries directly __[Coming Soon]__
 
