@@ -10,9 +10,9 @@ Tech-stack:
     * Express.js
     * PostgreSQL
  * Testing code:
-    * Mocha __[Coming Soon]__
-    * Chai __[Coming Soon]__
-    * Supertest __[Coming Soon]__
+    * Mocha
+    * Chai
+    * Supertest
  * Deployment:
     * Heroku __[Coming Soon]__
  * Documentation:
@@ -26,6 +26,7 @@ Tech-stack:
    * [OpenAPI Specification](#openapi-specification)
    * [Database](#database)
    * [Constraints](#constraints)
+   * [Testing Suite](#testing-suite)
 
 ## Installation
 
@@ -39,6 +40,10 @@ To install it, follow these steps:
 
 ## Documentation
 
+### Quickstart Guide __[Coming Soon]__
+
+TBD
+
 ### OpenAPI Specification
 
 Please discover this API via it's Swagger UI represented OpenAPI Specification __[Coming Soon]__
@@ -46,9 +51,9 @@ Please discover this API via it's Swagger UI represented OpenAPI Specification _
 ### Database
 
 Explore the [Database Schema](https://dbdiagram.io/d/62b8326969be0b672c421b5d):  
-![image](https://user-images.githubusercontent.com/63936366/175810172-84236a64-0697-48ca-b51c-c971cf0e2ee5.png)
+![image](https://user-images.githubusercontent.com/63936366/179350799-3e0cbb19-a7de-474d-be84-e4cb92d3d7e3.png)
 
-Or perform [Database Queries]() directly __[Coming Soon]__
+Or perform Database Queries directly __[Coming Soon]__
 
 ### Constraints
 
@@ -61,3 +66,48 @@ Or perform [Database Queries]() directly __[Coming Soon]__
 * When creating/updating an envelope, the value of `spending_available` cannot be higher than the value of `spending_limit`
 * Deleting an envelope will delete all related expenses
 * When creating an expense the `amount` will be deducted to the realted `envelope.spending_available`. The result of that operation cannot be lower than `0`
+
+### Testing Suite
+
+It tests the following cases:  
+* /salary  
+   * GET  
+     * ✔ Retrieves a salary object  
+     * ✔ Salary has the right schema  
+     * ✔ Salary is above `0`  
+   * PUT  
+     * ✔ Retrieves the salary in the response  
+     * ✔ Updates `salary.amount` to the provided one  
+
+* /envelopes  
+   * GET  
+     * ✔ Retrieves an array  
+     * ✔ Envelopes have the right schema  
+   * POST  
+     * ✔ Retrieves the envelope in the response  
+     * ✔ Fails if envelope does not have the right schema  
+     * ✔ Fails if `envelopes.name` already exists  
+     * ✔ Fails if `spending_available` > `spending_limit`  
+
+* /envelopes/id  
+   * GET  
+     * ✔ Retrieves an object  
+     * ✔ The envelope has the right schema  
+   * PUT  
+     * ✔ Updates the `name` to the provided one  
+     * ✔ Fails if envelope does not have the right schema  
+     * ✔ Fails if `spending_available` > `spending_limit`  
+   * DELETE  
+     * ✔ Deletes the right envelope  
+
+* /expenses  
+   * GET  
+     * ✔ Retrieves an array  
+     * ✔ Expenses have the right schema  
+   * POST  
+     * ✔ Retrieves the expense in the response  
+     * ✔ Fails if expense does not have the right schema  
+
+* /expenses/id  
+   * DELETE  
+     * ✔ Deletes the right expense  
