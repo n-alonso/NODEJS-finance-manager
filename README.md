@@ -26,7 +26,7 @@ Tech-stack:
    * [OpenAPI Specification](#openapi-specification)
    * [Database](#database)
    * [Constraints](#constraints)
-   * Testing Suite
+   * [Testing Suite](#testing-suite)
 
 ## Installation
 
@@ -39,6 +39,10 @@ To install it, follow these steps:
  * Test the project `npm test` __[Coming Soon}__
 
 ## Documentation
+
+### Quickstart Guide __[Coming Soon]__
+
+TBD
 
 ### OpenAPI Specification
 
