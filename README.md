@@ -22,7 +22,7 @@ Tech-stack:
 
 1. [Installation](#installation)
 2. [Documentation](#documentation)
-   * Quickstart Guide __[Coming Soon]__
+   * [Quickstart Guide](#quickstart-guide)
    * [OpenAPI Specification](#openapi-specification)
    * [Database](#database)
    * [Constraints](#constraints)
@@ -40,7 +40,7 @@ To install it, follow these steps:
 
 ## Documentation
 
-### Quickstart Guide __[Coming Soon]__
+### Quickstart Guide
 
 1. Get familar with the API via exploring the [OpenAPI Specification](#openapi-specification)
 2. First you will need to update your Salary:
