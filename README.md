@@ -53,8 +53,6 @@ Please discover this API via it's [Swagger UI](https://pfm-api.herokuapp.com/ui/
 Explore the [Database Schema](https://dbdiagram.io/d/62b8326969be0b672c421b5d):  
 ![image](https://user-images.githubusercontent.com/63936366/179350799-3e0cbb19-a7de-474d-be84-e4cb92d3d7e3.png)
 
-Or perform Database Queries directly __[Coming Soon]__
-
 ### Constraints
 
 * All properties within the schemas are mandatory for all endpoints and methods exept `id`
