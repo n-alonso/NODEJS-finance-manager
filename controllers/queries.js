@@ -94,7 +94,7 @@ const validateSumOfAllAmounts = async (req, endpoint) => {
     let sum;
     let result;
 
-    if (req.method === 'POST') {
+    if (req.method === 'POST' && endpoint !== 'salary') {
         pool.query(`SELECT SUM(spending_limit) FROM envelopes;`, (error, results) => {
             if (error) {
                 throw error
@@ -105,7 +105,7 @@ const validateSumOfAllAmounts = async (req, endpoint) => {
             }
         })
     }
-    if (req.method === 'PUT') {
+    if (req.method === 'PUT' && endpoint !== 'salary') {
         Promise.all([
             pool.query(`SELECT SUM(spending_limit) FROM envelopes;`),
             pool.query(`SELECT spending_limit FROM envelopes WHERE id = ${req.params.id};`)
