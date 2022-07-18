@@ -42,7 +42,7 @@ To install it, follow these steps:
 
 ### Quickstart Guide
 
-1. Get familar with the API via exploring the [OpenAPI Specification](#openapi-specification)
+1. Get familar with the API via exploring the [OpenAPI Specification](https://pfm-api.herokuapp.com/ui/)
 2. First you will need to update your Salary:
    ```
    curl --location --request PUT 'https://pfm-api.herokuapp.com/salary' \
