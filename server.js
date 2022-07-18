@@ -23,7 +23,7 @@ app.use('/expenses', expensesRouter)
 app.use(utils.handleInvalidPaths)
 app.use(utils.handleErrors)
 
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT
 app.listen(PORT, () => {
     console.log(`listening on port ${PORT}`)
 })
