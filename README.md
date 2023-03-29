@@ -1,6 +1,6 @@
 # backend_personal-finance-manager
 
-Server: https://pfm-api.herokuapp.com/
+Server: https://pfm-api.herokuapp.com/  
 NOTE: Heroku's deployment and thus url are currently not working as of Heroku's retirement of it's free tier.
 
 ## Introduction
