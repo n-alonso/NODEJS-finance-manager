@@ -8,18 +8,18 @@ NOTE: Heroku's deployment and thus url are currently not working as of Heroku's 
 Personal Finance Manager project to set your salary, manage your spending limits per categories or [envelopes](https://www.thebalance.com/what-is-envelope-budgeting-1293682), and add expenses that can automatically subtract their amounts from their respective categories.  
 
 Tech-stack: 
- * Implementation code:
+ * Implementation:
     * Node.js 
-    * Express.js
-    * PostgreSQL
- * Testing code:
+    * Express
+ * Testing:
     * Mocha
     * Chai
     * Supertest
- * Deployment:
-    * Heroku 
+ * Infrastructure:
+    * Heroku
+    * PostgreSQL 
  * Documentation:
-    * OpenAPI Specification
+    * OpenAPI Specification (OAS)
 
 ## Table of Contents
 
